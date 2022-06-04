@@ -1,18 +1,14 @@
-# Welcome to Remix!
+# remix-jokes-app
 
-- [Remix Docs](https://remix.run/docs)
+This is my version of the remix jokes app tutorial that can be found here https://remix.run/docs/en/v1/tutorials/jokes and here https://www.youtube.com/watch?v=hsIWJpuxNj0
 
-## Development
-
-From your terminal:
+## develop
 
 ```sh
 npm run dev
 ```
 
-This starts your app in development mode, rebuilding assets on file changes.
-
-## Deployment
+## deploy
 
 First, build your app for production:
 
@@ -37,9 +33,9 @@ Make sure to deploy the output of `remix build`
 - `build/`
 - `public/build/`
 
-### Using a Template
+### change hosting template
 
-When you ran `npx create-remix@latest` there were a few choices for hosting. You can run that again to create a new project, then copy over your `app/` folder to the new project that's pre-configured for your target server.
+- when running `npx create-remix@latest` there are a few choices for hosting. Run that again creates a new project, then copy over the `app/` folder to the new project that's pre-configured for your target server.
 
 ```sh
 cd ..
@@ -51,3 +47,9 @@ rm -rf app
 # copy your app over
 cp -R ../my-old-remix-app/app app
 ```
+
+## useful commands
+
+- initialize Prisma with sqlite: `npx prisma init --datasource-provider sqlite` - likely similar commands exist for other databases
+- `npx prisma db push`: creates a db in `prisma/dev.db` according to the schema `prisma/schema.prisma` (also generates TS types for prisma (somewhere?))
+- (insert (create) fixtures from `prisma/seed.ts`: `node --require esbuild-register prisma/seed.ts` - happens automatically when "resetting the database" thanks to the prisma entry in package.json)
