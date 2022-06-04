@@ -1,6 +1,9 @@
-node_modules
+node_modules/
+.history/
+.cache/
+build/
+public/build/
 
-/.cache
-/build
-/public/build
 .env
+.DS_Store
+dev.db
