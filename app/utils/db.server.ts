@@ -1,5 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 
+// note: because of the `.server.ts` ending of the filename, this will not be included in the build (esbuild specific)
+
 const db: PrismaClient =
   process.env.NODE_ENV === "production" ? new PrismaClient() : getDevDb();
 
@@ -16,5 +18,3 @@ function getDevDb() {
 }
 
 export { db };
-
-// because of the `.server.ts` ending of the filename, this will not be included in the build (esbuild specific)

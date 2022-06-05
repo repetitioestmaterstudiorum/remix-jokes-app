@@ -1,13 +1,27 @@
-import type { LinksFunction } from "@remix-run/node";
-import { Outlet, Link } from "@remix-run/react";
-
+import type { Joke } from "@prisma/client";
+import type { LinksFunction, LoaderFunction } from "@remix-run/node";
+import { Outlet, Link, useLoaderData } from "@remix-run/react";
 import stylesUrl from "~/styles/jokes.css";
+import { db } from "~/utils/db.server";
 
 export const links: LinksFunction = () => {
+  // executed on the server and client, remix magic: remix knows what to do with this, not used below
   return [{ rel: "stylesheet", href: stylesUrl }];
 };
 
+type JokeListItem = Pick<Joke, "id" | "name">;
+export const loader: LoaderFunction = async () => {
+  // executed on the server only
+  const jokesListItems: JokeListItem[] = await db.joke.findMany({
+    select: { id: true, name: true },
+  });
+  return jokesListItems;
+};
+
 export default function JokesRoute() {
+  // executed on the server and client, gets data from the loader above
+  const jokesListItems: JokeListItem[] = useLoaderData();
+
   return (
     <div className="jokes-layout">
       <header className="jokes-header">
@@ -26,11 +40,15 @@ export default function JokesRoute() {
             <Link to=".">Get a random joke</Link>
             <p>Here are a few more jokes to check out:</p>
             <ul>
+              {/* data from above */}
+              {jokesListItems.map((j) => (
+                <li key={j.id}>
+                  <Link to={j.id}>{j.name}</Link>
+                </li>
+              ))}
+              {/* this one is the link to the fake child `jokes.fake-child.tsx` */}
               <li>
                 <Link to="fake-child">Fake Child</Link>
-              </li>
-              <li>
-                <Link to="some-joke-id">Hippo</Link>
               </li>
             </ul>
             <Link to="new" className="button">
