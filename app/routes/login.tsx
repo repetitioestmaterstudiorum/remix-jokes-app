@@ -1,9 +1,10 @@
 import type { ActionFunction, LinksFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { useActionData, Link, useSearchParams } from "@remix-run/react";
+import { useActionData, useSearchParams, Link } from "@remix-run/react";
+
 import { db } from "~/utils/db.server";
+import { createUserSession, login, register } from "~/utils/session.server";
 import stylesUrl from "~/styles/login.css";
-import { createUserSession, login } from "~/utils/session.server";
 
 export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: stylesUrl }];
@@ -22,7 +23,6 @@ function validatePassword(password: unknown) {
 }
 
 function validateUrl(url: any) {
-  console.log(url);
   const urls = ["/jokes", "/", "https://remix.run"];
   if (urls.includes(url)) {
     return url;
@@ -79,7 +79,6 @@ export const action: ActionFunction = async ({ request }) => {
           formError: `Username/Password combination is incorrect`,
         });
       }
-
       return createUserSession(user.id, redirectTo);
     }
     case "register": {
@@ -93,12 +92,15 @@ export const action: ActionFunction = async ({ request }) => {
         });
       }
 
-      // create the user
-      // create their session and redirect to /jokes
-      return badRequest({
-        fields,
-        formError: "Not implemented",
-      });
+      const user = await register({ username, password });
+      if (!user) {
+        return badRequest({
+          fields,
+          formError: `Something went wrong trying to create a new user.`,
+        });
+      }
+
+      return createUserSession(user.id, redirectTo);
     }
     default: {
       return badRequest({

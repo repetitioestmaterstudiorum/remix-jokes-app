@@ -4,6 +4,7 @@ import { json } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
 import { useActionData } from "@remix-run/react";
 import { db } from "~/utils/db.server";
+import { requireUserId } from "~/utils/session.server";
 
 type ActionErrorResponse = {
   formError?: string;
@@ -21,6 +22,7 @@ export const action: ActionFunction = async ({
   request,
 }): Promise<Response | ActionErrorResponse> => {
   // get data from HTML form
+  const userId = await requireUserId(request);
   const form = await request.formData();
   const name = form.get("name");
   const content = form.get("content");
@@ -42,7 +44,7 @@ export const action: ActionFunction = async ({
 
   // insert data into the DB
   const joke: Joke | null = await db.joke.create({
-    data: fields,
+    data: { ...fields, jokesterId: userId },
   });
   if (!joke)
     throw new Error(
@@ -118,7 +120,7 @@ export default function NewJokeRoute() {
 }
 
 // helpers
-function badRequest(data: ActionResponse) {
+function badRequest(data: ActionErrorResponse) {
   return json(data, { status: 400 });
 }
 
