@@ -52,4 +52,5 @@ cp -R ../my-old-remix-app/app app
 
 - initialize Prisma with sqlite: `npx prisma init --datasource-provider sqlite` - likely similar commands exist for other databases
 - `npx prisma db push`: creates a db in `prisma/dev.db` according to the schema `prisma/schema.prisma` (also generates TS types for prisma (somewhere?))
-- (insert (create) fixtures from `prisma/seed.ts`: `node --require esbuild-register prisma/seed.ts` - happens automatically when "resetting the database" thanks to the prisma entry in package.json)
+- (insert (create) fixtures from `prisma/seed.ts`: `node --require esbuild-register prisma/seed.ts` - happens automatically when "resetting the database" thanks to the prisma entry in package.json -> if not, run `npx prisma db seed`)
+- `npx prisma studio` spins up a local server to manage the DB via web client on localhost:5555
